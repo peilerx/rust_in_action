@@ -1,0 +1,7 @@
+   Compiling l_2 v0.1.0 (/home/danny/rust/rust_in_action/l_2)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.23s
+     Running `target/debug/l_2`
+debug: "    Little penguin, 33" -> ["Little penguin", "33"]
+debug: "    Yellow-eyed penguin, 65" -> ["Yellow-eyed penguin", "65"]
+debug: "    Fiordland penguin, 60" -> ["Fiordland penguin", "60"]
+debug: "    Invalid, data" -> ["Invalid", "data"]
