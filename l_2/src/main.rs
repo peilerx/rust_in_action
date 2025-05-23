@@ -1,7 +1,7 @@
 fn main() {
     let penguin_data = "\
     common name, length (cm)
-    Little penguin, 33
+    Little penguin, test
     Yellow-eyed penguin, 65
     Fiordland penguin, 60
     Invalid, data
@@ -25,6 +25,11 @@ fn main() {
         if let Ok(mut length) = fields[1].parse::<f32>() {
             length = length + 1.0;
             println!("{}, {}cm", name, length);
+        } else if let Err(length) = fields[1].parse::<f32>() {
+            eprintln!(
+                "This fields is not float type field[1] = {}, Err({})",
+                fields[1], length
+            )
         }
     }
 
