@@ -32,6 +32,8 @@ fn main() {
 
     let data2 = Arc::clone(&thread_data);
 
+    handle1.join().unwrap();
+
     let handle2 = thread::spawn(move || {
         let mut value = data2.lock().unwrap();
         println!("Thread 2 non changed data: {}", *value);
@@ -39,7 +41,6 @@ fn main() {
         println!("Thread 2 changed data: {}", *value);
     });
 
-    handle1.join().unwrap();
     handle2.join().unwrap();
 
     println!("Main: {}", *thread_data.lock().unwrap());
