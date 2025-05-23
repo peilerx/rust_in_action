@@ -7,9 +7,9 @@
 //     Spelt,
 //     Wheat,
 // }
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Barrier, Mutex};
 use std::thread;
-use std::time::Duration;
+// use std::time::Duration;
 fn main() {
     // let mut grains: Vec<Cereal> = vec![];
 
@@ -27,9 +27,15 @@ fn main() {
     let thread_data = Arc::new(Mutex::new(100));
 
     let data1 = Arc::clone(&thread_data);
+
+    let barrier1 = Arc::new(Barrier::new(2));
+    let barrier2 = Arc::new(Barrier::new(2));
     //Когда я разблокировал mutex, переменной thread_data начал заниматся второй поток
     //после автоматической разблокировки второго потока, я блокирую Mutex в первом и снова меняю данные
     // таким образом первый поток последним завершает свою работу
+    let barrier1_1 = Arc::clone(&barrier1);
+    let barrier2_1 = Arc::clone(&barrier2);
+
     let handle1 = thread::spawn(move || {
         let mut value = data1.lock().unwrap();
         println!("Thread 1 non changed data: {}", *value);
@@ -37,30 +43,35 @@ fn main() {
         println!("Thread 1 changed data: {}", *value);
         drop(value);
         println!("Thread 1: Mutex unlocked");
-        thread::sleep(Duration::from_millis(1000));
+        barrier1_1.wait();
+        // thread::sleep(Duration::from_millis(1000));
         println!("Thread 1: Still running after drop");
-        thread::sleep(Duration::from_millis(800));
+        // thread::sleep(Duration::from_millis(800));
         value = data1.lock().unwrap();
         *value = 700;
         println!(
             "Thread 1: changes the value again after Thread 2: {}",
             *value
         );
-        thread::sleep(Duration::from_millis(700));
+        // thread::sleep(Duration::from_millis(700));
+        barrier2_1.wait();
     });
 
     let data2 = Arc::clone(&thread_data);
-
+    let barrier1_2 = Arc::clone(&barrier1);
     let handle2 = thread::spawn(move || {
-        thread::sleep(Duration::from_millis(400));
+        // thread::sleep(Duration::from_millis(400));
+        barrier1_2.wait();
         let mut value = data2.lock().unwrap();
         println!("Thread 2 non changed data: {}", *value);
         *value = 1000;
         println!("Thread 2 changed data: {}", *value);
     });
 
-    handle1.join().unwrap();
+    barrier2.wait();
     handle2.join().unwrap();
 
     println!("Main: {}", *thread_data.lock().unwrap());
+
+    handle1.join().unwrap();
 }
