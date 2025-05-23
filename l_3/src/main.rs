@@ -34,6 +34,13 @@ fn main() {
         thread::sleep(Duration::from_millis(1000));
         println!("Thread 1: Still running after drop");
         thread::sleep(Duration::from_millis(800));
+        value = data1.lock().unwrap();
+        *value = 700;
+        println!(
+            "Thread 1: changes the value again after Thread 2: {}",
+            *value
+        );
+        thread::sleep(Duration::from_millis(700));
     });
 
     let data2 = Arc::clone(&thread_data);
