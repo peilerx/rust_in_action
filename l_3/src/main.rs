@@ -28,6 +28,7 @@ fn main() {
         println!("Thread 1 non changed data: {}", *value);
         *value = 500;
         println!("Thread 1 changed data: {}", *value);
+        drop(data1.lock().unwrap());
     });
 
     let data2 = Arc::clone(&thread_data);
